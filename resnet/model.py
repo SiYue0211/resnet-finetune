@@ -98,9 +98,11 @@ class ResNetModel(object):
             # if contains(op_name, skip_layers):
             #     continue
 
-            if parts[0] == 'fc' and self.num_classes != 1000:
+            if contains(parts[0], skip_layers):
                 continue
 
+            # if parts[0] == 'fc' and self.num_classes != 1000:
+            #     continue
             full_name = "{}:0".format(op_name)
             var = [v for v in tf.global_variables() if v.name == full_name][0]
             session.run(var.assign(weights_dict[op_name]))

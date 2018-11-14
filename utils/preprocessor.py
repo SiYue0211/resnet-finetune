@@ -24,7 +24,7 @@ class BatchPreprocessor(object):
         dataset_file = open(dataset_file_path)
         lines = dataset_file.readlines()
         for line in lines:
-            items = line.split()
+            items = line.strip().split('\t')
             self.images.append(items[0])
             self.labels.append(int(items[1]))
 
