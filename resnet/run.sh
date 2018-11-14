@@ -1,0 +1,1 @@
+python -u  finetune.py --learning_rate=0.00001 --gpus='0' --resnet_depth=50 --num_classes=2 -batch_size=250 --training_file='../data/train.txt' --val_file='../data/val.txt' --train_layers="fc,scale5/block3,scale5/block2,scale5/block1" 

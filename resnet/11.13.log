@@ -1,0 +1,45 @@
+nohup: ignoring input
++ python -u finetune.py --learning_rate=0.0001 --gpus=0 --resnet_depth=50 --num_classes=2 -batch_size=250 --training_file=../data/train.txt --val_file=../data/val.txt
+resnet_20181113_195919
+gpu is 0
+WARNING:tensorflow:From /data1/siyue/Code/resnet-finetune/resnet/model.py:72: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+
+Future major versions of TensorFlow will allow gradients to flow
+into the labels input on backprop by default.
+
+See @{tf.nn.softmax_cross_entropy_with_logits_v2}.
+
+2018-11-13 19:59:29.937815: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2018-11-13 19:59:32.662400: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:898] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2018-11-13 19:59:32.662855: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 0 with properties: 
+name: Tesla M40 24GB major: 5 minor: 2 memoryClockRate(GHz): 1.112
+pciBusID: 0000:00:06.0
+totalMemory: 22.41GiB freeMemory: 14.03GiB
+2018-11-13 19:59:32.662887: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-11-13 19:59:33.305721: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-11-13 19:59:33.305793: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-11-13 19:59:33.305807: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-11-13 19:59:33.306163: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 13594 MB memory) -> physical GPU (device: 0, name: Tesla M40 24GB, pci bus id: 0000resnet_20181113_195618
+gpu is 0
+2018-11-13 19:57:22.299792 Start training...
+2018-11-13 19:57:22.299848 Open Tensorboard at --logdir ../training/resnet_20181113_195618/tensorboard
+2018-11-13 19:57:22.299895 Epoch number: 1
+2018-11-13 19:58:19.805289 step:10 loss: 0.8305060267448425 acc: 0.5400000214576721
+2018-11-13 19:59:13.061751 step:20 loss: 0.8149001598358154 acc: 0.527999997138977
+2018-11-13 20:00:07.085281 step:30 loss: 0.8367568254470825 acc: 0.527999997138977
+2018-11-13 20:01:02.426151 step:40 loss: 0.8099736571311951 acc: 0.5199999809265137
+2018-11-13 20:01:56.363338 step:50 loss: 0.8414718508720398 acc: 0.5600000023841858
+2018-11-13 20:02:53.631605 step:60 loss: 0.8092859983444214 acc: 0.568000012018-11-13 20:07:09.503415 step:70 loss: 0.8060736656188965 acc: 0.5519999861717224
+2018-11-13 20:08:01.485526 step:80 loss: 0.8107470870018005 acc: 0.527999997138977
+2018-11-13 20:08:54.049140 step:90 loss: 0.8201111555099487 acc: 0.5
+2018-11-13 20:09:23.712391 start validation
+Traceback (most recent call last):
+  File "finetune.py", line 169, in <module>
+    tf.app.run()
+  File "/home/www/anaconda3/envs/tensorflow/lib/python3.6/site-packages/tensorflow/python/platform/app.py", line 126, in run
+    _sys.exit(main(argv))
+  File "finetune.py", line 143, in main
+    batch_tx, batch_ty = val_preprocessor.next_batch(flags.batch_size)
+NameError: name 'flags' is not defined
+e 'flags' is not defined
