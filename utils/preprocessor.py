@@ -56,12 +56,11 @@ class BatchPreprocessor(object):
 
         # Update pointer
         self.pointer += batch_size
-
+        
         # Read images
         images = np.ndarray([batch_size, self.output_size[0], self.output_size[1], 3])
         for i in range(len(paths)):
             img = cv2.imread(paths[i])
-
             # Flip image at random if flag is selected
             if self.horizontal_flip and np.random.random() < 0.5:
                 img = cv2.flip(img, 1)
@@ -86,12 +85,11 @@ class BatchPreprocessor(object):
             # Subtract mean color
             img -= np.array(self.mean_color)
 
-            images[i] = img
-
+        
         # Expand labels to one hot encoding
         one_hot_labels = np.zeros((batch_size, self.num_classes))
         for i in range(len(labels)):
             one_hot_labels[i][labels[i]] = 1
-
+        # images = np.delete(images, del_row, axis=0)
         # Return array of images and labels
         return images, one_hot_labels

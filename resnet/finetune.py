@@ -1,3 +1,4 @@
+# coding:utf-8
 import os, sys
 import numpy as np
 import tensorflow as tf
@@ -6,7 +7,7 @@ from model import ResNetModel
 sys.path.insert(0, '../utils')
 from preprocessor import BatchPreprocessor
 
-
+tf.app.flags.DEFINE_string('gpus', '0', 'which gpus to use')
 tf.app.flags.DEFINE_float('learning_rate', 0.0001, 'Learning rate for adam optimizer')
 tf.app.flags.DEFINE_integer('resnet_depth', 50, 'ResNet architecture to be used: 50, 101 or 152')
 tf.app.flags.DEFINE_integer('num_epochs', 10, 'Number of epochs for training')
@@ -52,8 +53,13 @@ def main(_):
     flags_file.write('multi_scale={}\n'.format(FLAGS.multi_scale))
     flags_file.write('tensorboard_root_dir={}\n'.format(FLAGS.tensorboard_root_dir))
     flags_file.write('log_step={}\n'.format(FLAGS.log_step))
+    flags_file.write('gpus={}\n'.format(FLAGS.gpus))
     flags_file.close()
 
+    #gpus
+    if FLAGS.gpus:
+        print('gpu is {}'.format(FLAGS.gpus))
+        os.environ["CUDA_VISIBLE_DEVICES"] = FLAGS.gpus
     # Placeholders
     x = tf.placeholder(tf.float32, [FLAGS.batch_size, 224, 224, 3])
     y = tf.placeholder(tf.float32, [None, FLAGS.num_classes])
@@ -78,6 +84,8 @@ def main(_):
     val_writer = tf.summary.FileWriter(tensorboard_val_dir)
     saver = tf.train.Saver()
 
+    # set gpu
+    gpu_options = tf.GPUOptions(allow_growth=True)
     # Batch preprocessors
     multi_scale = FLAGS.multi_scale.split(',')
     if len(multi_scale) == 2:
@@ -94,7 +102,7 @@ def main(_):
     val_batches_per_epoch = np.floor(len(val_preprocessor.labels) / FLAGS.batch_size).astype(np.int16)
 
 
-    with tf.Session() as sess:
+    with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
         sess.run(tf.global_variables_initializer())
         train_writer.add_graph(sess.graph)
 
@@ -121,10 +129,13 @@ def main(_):
                     s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, is_training: False})
                     train_writer.add_summary(s, epoch * train_batches_per_epoch + step)
 
+                if step % 10 == 0:
+                    train_loss_num, train_acc_num = sess.run([loss, accuracy], feed_dict={x: batch_xs, y:batch_ys, is_training: False})
+                    print('{} step:{} loss: {} acc: {}'.format(datetime.datetime.now(), step, train_loss_num, train_acc_num))
                 step += 1
 
-            # Epoch completed, start validation
-            print("{} Start validation".format(datetime.datetime.now()))
+            # epoch completed, start validation
+            print("{} start validation".format(datetime.datetime.now()))
             test_acc = 0.
             test_count = 0
 
@@ -135,23 +146,23 @@ def main(_):
                 test_count += 1
 
             test_acc /= test_count
-            s = tf.Summary(value=[
-                tf.Summary.Value(tag="validation_accuracy", simple_value=test_acc)
-            ])
+            # s = tf.summary(value=[
+            #     tf.summary.value(tag="validation_accuracy", simple_value=test_acc)
+            # ])
             val_writer.add_summary(s, epoch+1)
-            print("{} Validation Accuracy = {:.4f}".format(datetime.datetime.now(), test_acc))
+            print("{} validation accuracy = {:.4f}".format(datetime.datetime.now(), test_acc))
 
-            # Reset the dataset pointers
+            # reset the dataset pointers
             val_preprocessor.reset_pointer()
             train_preprocessor.reset_pointer()
 
-            print("{} Saving checkpoint of model...".format(datetime.datetime.now()))
+            print("{} saving checkpoint of model...".format(datetime.datetime.now()))
 
             #save checkpoint of the model
             checkpoint_path = os.path.join(checkpoint_dir, 'model_epoch'+str(epoch+1)+'.ckpt')
             save_path = saver.save(sess, checkpoint_path)
 
-            print("{} Model checkpoint saved at {}".format(datetime.datetime.now(), checkpoint_path))
+            print("{} model checkpoint saved at {}".format(datetime.datetime.now(), checkpoint_path))
 
 
 if __name__ == '__main__':
