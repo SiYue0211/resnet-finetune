@@ -58,7 +58,7 @@ def main(_):
 
     #gpus
     if FLAGS.gpus:
-        print('gpu is {}'.format(FLAGS.gpus))
+        print('Use Gpu: {}'.format(FLAGS.gpus))
         os.environ["CUDA_VISIBLE_DEVICES"] = FLAGS.gpus
     # Placeholders
     x = tf.placeholder(tf.float32, [FLAGS.batch_size, 224, 224, 3])
