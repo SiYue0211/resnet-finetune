@@ -76,11 +76,12 @@ class ResNetModel(object):
         return self.loss
 
     def optimize(self, learning_rate, train_layers=[]):
-        trainable_var_names = ['weights', 'biases', 'beta', 'gamma']
-        var_list = [v for v in tf.trainable_variables() if
-            v.name.split(':')[0].split('/')[-1] in trainable_var_names and
-            contains(v.name, train_layers)]
-        train_op = tf.train.AdamOptimizer(learning_rate).minimize(self.loss, var_list=var_list)
+        # trainable_var_names = ['weights', 'biases', 'beta', 'gamma']
+        # var_list = [v for v in tf.trainable_variables() if
+        #     v.name.split(':')[0].split('/')[-1] in trainable_var_names and
+        #     contains(v.name, train_layers)]
+        # train_op = tf.train.AdamOptimizer(learning_rate).minimize(self.loss, var_list=var_list)
+        train_op = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
 
         ema = tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY)
         tf.add_to_collection(UPDATE_OPS_COLLECTION, ema.apply([self.loss]))
